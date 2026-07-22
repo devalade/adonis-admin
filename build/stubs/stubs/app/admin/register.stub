@@ -1,0 +1,5 @@
+import { registerResources } from '@devalade/adonis-admin/registry'
+
+export function registerAdminResources() {
+  registerResources([])
+}

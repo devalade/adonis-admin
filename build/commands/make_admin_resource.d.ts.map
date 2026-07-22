@@ -1,0 +1,1 @@
+{"version":3,"file":"make_admin_resource.d.ts","sourceRoot":"","sources":["../../commands/make_admin_resource.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,WAAW,EAAe,MAAM,oBAAoB,CAAA;AAG7D,MAAM,CAAC,OAAO,OAAO,iBAAkB,SAAQ,WAAW;IACxD,MAAM,CAAC,WAAW,SAAwB;IAC1C,MAAM,CAAC,WAAW,SAAkD;IAG5D,KAAK,EAAE,MAAM,CAAA;IAKb,QAAQ,EAAE,OAAO,CAAA;IAMjB,KAAK,EAAE,OAAO,CAAA;IAEhB,GAAG;CA0BV"}

@@ -1,0 +1,31 @@
+import {{ modelName }} from '#models/{{ modelImport }}'
+import {
+  Action,
+  DateColumn,
+  defineForm,
+  defineTable,
+  EmailField,
+  Resource,
+  TextColumn,
+  TextField,
+} from '@devalade/adonis-admin'
+
+export default class {{ resourceName }} extends Resource {
+  static model = {{ modelName }}
+  static label = '{{ modelName }}'
+  static icon = 'file'
+
+  static table(table: ReturnType<typeof defineTable>) {
+    return table
+      .columns([
+        TextColumn.make('id').setLabel('ID').setSortable(),
+        DateColumn.make('createdAt').setLabel('Created').setSortable(),
+      ])
+      .rowActions([Action.view(), Action.edit(), Action.delete()])
+      .defaultSort('createdAt', 'desc')
+  }
+
+  static form(form: ReturnType<typeof defineForm>) {
+    return form.fields([TextField.make('name').setLabel('Name').setRequired()])
+  }
+}

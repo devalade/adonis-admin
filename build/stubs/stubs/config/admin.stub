@@ -1,0 +1,20 @@
+import type { AdminPanelConfig } from '@devalade/adonis-admin/panel'
+import { loginValidator } from '#validators/auth'
+
+const adminConfig = {
+  path: '/admin',
+  guard: 'web',
+  registerModule: '#app_admin/register',
+  userModelModule: '#models/user',
+  loginValidator,
+  resources: [],
+  pagination: {
+    defaultPerPage: 20,
+    maxPerPage: 100,
+  },
+  bulkDestroy: {
+    maxIds: 100,
+  },
+} satisfies AdminPanelConfig
+
+export default adminConfig
