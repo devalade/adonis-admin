@@ -1,8 +1,10 @@
-import app from '@adonisjs/core/services/app'
 import type { HttpContext } from '@adonisjs/core/http'
 import type { NextFn } from '@adonisjs/core/types/http'
 import type { Authenticators } from '@adonisjs/auth/types'
-import type { AdminPanelConfig } from '../panel.js'
+import { getAdminConfig } from '../helpers/admin_config.js'
+import { useAdminSessionGuard } from '../helpers/admin_auth.js'
+
+type AdminGuard = keyof Authenticators
 
 /**
  * Guest middleware for the admin login page. Redirects authenticated
@@ -10,25 +12,25 @@ import type { AdminPanelConfig } from '../panel.js'
  */
 export default class AdminGuestMiddleware {
   get redirectTo() {
-    const config = app.config.get('admin') as AdminPanelConfig
-    return config.path
+    return getAdminConfig().path
   }
 
   async handle(
     ctx: HttpContext,
     next: NextFn,
-    options: { guards?: (keyof Authenticators)[] } = {}
-  ) {
-    const config = app.config.get('admin') as AdminPanelConfig
-    const guards = options.guards ?? [config.guard as keyof Authenticators]
+    options: { guards?: AdminGuard[] } = {}
+  ): Promise<void> {
+    const config = getAdminConfig()
+    const guards = options.guards ?? [config.guard as AdminGuard]
 
     for (const guard of guards) {
-      if (await ctx.auth.use(guard).check()) {
+      if (await useAdminSessionGuard(ctx.auth, guard).check()) {
         ctx.session.reflash()
-        return ctx.response.redirect(this.redirectTo, true)
+        ctx.response.redirect(this.redirectTo, true)
+        return
       }
     }
 
-    return next()
+    await next()
   }
 }

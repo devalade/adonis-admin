@@ -1,4 +1,6 @@
 export { adminPanelDefaults, resolveAdminConfig } from './panel.js';
+export { getAdminConfig } from './helpers/admin_config.js';
+export { adminResourceRoute } from './helpers/admin_routes.js';
 export { default as AdminProvider } from './provider.js';
 export { bootAdminPanel, registerAdminRoutes } from './routes/register_routes.js';
 export { Resource } from './resource.js';
@@ -13,3 +15,4 @@ export { Field, TextField, EmailField, TextareaField, SelectField, BooleanField,
 export { default as AdminResourceController } from './controllers/resource_controller.js';
 export { default as AdminSessionController } from './controllers/session_controller.js';
 export { RelationManager } from './extensions/relation_manager.js';
+import './types/augmentations.js';

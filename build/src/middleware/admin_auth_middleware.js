@@ -1,18 +1,17 @@
-import app from '@adonisjs/core/services/app';
+import { getAdminConfig } from '../helpers/admin_config.js';
 /**
  * Auth middleware for the admin panel. Redirects unauthenticated users
  * to the admin login page instead of the main app login.
  */
 export default class AdminAuthMiddleware {
-    #config;
     get redirectTo() {
-        const config = this.#config ?? app.config.get('admin');
+        const config = getAdminConfig();
         return `${config.path.replace(/\/$/, '')}/login`;
     }
     async handle(ctx, next, options = {}) {
-        this.#config = app.config.get('admin');
-        const guards = options.guards ?? [this.#config.guard];
+        const config = getAdminConfig();
+        const guards = options.guards ?? [config.guard];
         await ctx.auth.authenticateUsing(guards, { loginRoute: this.redirectTo });
-        return next();
+        await next();
     }
 }

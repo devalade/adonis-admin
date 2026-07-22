@@ -1,22 +1,23 @@
-import app from '@adonisjs/core/services/app';
+import { getAdminConfig } from '../helpers/admin_config.js';
+import { useAdminSessionGuard } from '../helpers/admin_auth.js';
 /**
  * Guest middleware for the admin login page. Redirects authenticated
  * users to the admin dashboard.
  */
 export default class AdminGuestMiddleware {
     get redirectTo() {
-        const config = app.config.get('admin');
-        return config.path;
+        return getAdminConfig().path;
     }
     async handle(ctx, next, options = {}) {
-        const config = app.config.get('admin');
+        const config = getAdminConfig();
         const guards = options.guards ?? [config.guard];
         for (const guard of guards) {
-            if (await ctx.auth.use(guard).check()) {
+            if (await useAdminSessionGuard(ctx.auth, guard).check()) {
                 ctx.session.reflash();
-                return ctx.response.redirect(this.redirectTo, true);
+                ctx.response.redirect(this.redirectTo, true);
+                return;
             }
         }
-        return next();
+        await next();
     }
 }

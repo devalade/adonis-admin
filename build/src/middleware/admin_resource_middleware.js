@@ -1,4 +1,4 @@
-import app from '@adonisjs/core/services/app';
+import { getAdminConfig } from '../helpers/admin_config.js';
 import { resolveResource } from '../registry.js';
 function requestPathname(request) {
     const raw = request.url().split('?')[0] ?? '';
@@ -9,7 +9,7 @@ function requestPathname(request) {
 }
 export default class AdminResourceMiddleware {
     async handle(ctx, next) {
-        const config = app.config.get('admin');
+        const config = getAdminConfig();
         const pathname = requestPathname(ctx.request);
         const prefix = config.path.replace(/\/$/, '');
         const relativePath = pathname.startsWith(prefix)
@@ -17,9 +17,10 @@ export default class AdminResourceMiddleware {
             : '';
         const slug = relativePath.split('/')[0];
         if (!slug) {
-            return ctx.response.abort('Admin resource not found', 404);
+            ctx.response.abort('Admin resource not found', 404);
+            return;
         }
         ctx.adminResource = resolveResource(slug);
-        return next();
+        await next();
     }
 }

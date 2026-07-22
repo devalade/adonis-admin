@@ -44,6 +44,12 @@ export class Resource {
     static canDelete(_ctx, _record) {
         return true;
     }
+    static supportsEdit(_ctx) {
+        return true;
+    }
+    static supportsDelete(_ctx) {
+        return true;
+    }
     static modifyIndexQuery(query, _ctx) {
         return query;
     }
@@ -68,8 +74,8 @@ export class Resource {
             defaultSort,
             searchable: table.getColumns().some((column) => column.searchable),
             canCreate: this.canCreate(ctx),
-            canEdit: true,
-            canDelete: true,
+            canEdit: this.supportsEdit(ctx),
+            canDelete: this.supportsDelete(ctx),
             canView: this.canView(ctx),
         };
     }

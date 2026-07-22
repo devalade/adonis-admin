@@ -1,5 +1,7 @@
 export type { AdminPanelConfig } from './panel.js';
 export { adminPanelDefaults, resolveAdminConfig } from './panel.js';
+export { getAdminConfig } from './helpers/admin_config.js';
+export { adminResourceRoute, type AdminResourceRouteAction, type AdminResourceRouteName } from './helpers/admin_routes.js';
 export { default as AdminProvider } from './provider.js';
 export { bootAdminPanel, registerAdminRoutes, type AdminRouteMiddleware } from './routes/register_routes.js';
 export { Resource, type ResourceConstructor } from './resource.js';
@@ -14,5 +16,7 @@ export { Field, TextField, EmailField, TextareaField, SelectField, BooleanField,
 export { default as AdminResourceController } from './controllers/resource_controller.js';
 export { default as AdminSessionController } from './controllers/session_controller.js';
 export { RelationManager } from './extensions/relation_manager.js';
+export type { AdminResourceValidator, AdminLoginValidator, } from './types/validators.js';
 export type * from './types.js';
+import './types/augmentations.js';
 //# sourceMappingURL=index.d.ts.map

@@ -1,7 +1,6 @@
-import app from '@adonisjs/core/services/app'
+import { getAdminConfig } from '../helpers/admin_config.js'
 import { getDefaultResource, getRegisteredResources } from '../registry.js'
 import type { ResourceConstructor } from '../resource.js'
-import type { AdminPanelConfig } from '../panel.js'
 import AdminResourceController from '../controllers/resource_controller.js'
 import AdminSessionController from '../controllers/session_controller.js'
 
@@ -56,7 +55,7 @@ function registerResourceRoutes(
 
 export async function registerAdminRoutes(routeMiddleware: AdminRouteMiddleware) {
   const { default: router } = await import('@adonisjs/core/services/router')
-  const config = app.config.get('admin') as AdminPanelConfig
+  const config = getAdminConfig()
   const adminPath = config.path.replace(/\/$/, '')
 
   router

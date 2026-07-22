@@ -1,4 +1,4 @@
-import app from '@adonisjs/core/services/app';
+import { getAdminConfig } from '../helpers/admin_config.js';
 import { getDefaultResource, getRegisteredResources } from '../registry.js';
 import AdminResourceController from '../controllers/resource_controller.js';
 import AdminSessionController from '../controllers/session_controller.js';
@@ -39,7 +39,7 @@ function registerResourceRoutes(router, ResourceClass, adminPath, routeMiddlewar
 }
 export async function registerAdminRoutes(routeMiddleware) {
     const { default: router } = await import('@adonisjs/core/services/router');
-    const config = app.config.get('admin');
+    const config = getAdminConfig();
     const adminPath = config.path.replace(/\/$/, '');
     router
         .group(() => {

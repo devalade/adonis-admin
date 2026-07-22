@@ -3,7 +3,6 @@ export const adminPanelDefaults = {
     guard: 'web',
     registerModule: '#app_admin/register',
     userModelModule: '#models/user',
-    loginValidator: null,
     resources: [],
     pagination: {
         defaultPerPage: 20,
@@ -14,9 +13,13 @@ export const adminPanelDefaults = {
     },
 };
 export function resolveAdminConfig(config) {
+    if (!config.loginValidator) {
+        throw new Error('admin.loginValidator is required in config/admin.ts');
+    }
     return {
         ...adminPanelDefaults,
         ...config,
+        loginValidator: config.loginValidator,
         pagination: {
             ...adminPanelDefaults.pagination,
             ...config.pagination,
@@ -25,5 +28,6 @@ export function resolveAdminConfig(config) {
             ...adminPanelDefaults.bulkDestroy,
             ...config.bulkDestroy,
         },
+        resources: config.resources ?? adminPanelDefaults.resources,
     };
 }

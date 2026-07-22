@@ -1,15 +1,3 @@
-declare module '@adonisjs/core/http' {
-    interface HttpContext {
-        auth: any;
-    }
-    interface Redirect {
-        toRoute(route: string, params?: Record<string, unknown>): Redirect;
-    }
-}
-declare module '@adonisjs/inertia/types' {
-    interface InertiaPages {
-        [key: string]: any;
-    }
-}
-export {};
+import './src/types/augmentations.js';
+import './src/helpers/admin_auth.js';
 //# sourceMappingURL=adonis_types.d.ts.map

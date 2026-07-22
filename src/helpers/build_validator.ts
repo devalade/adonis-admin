@@ -1,5 +1,7 @@
 import vine from '@vinejs/vine'
+import type { SchemaTypes } from '@vinejs/vine/types'
 import type { Field } from '../form/fields/index.js'
+import type { AdminResourceValidator } from '../types/validators.js'
 
 function fieldRule(field: Field) {
   switch (field.type) {
@@ -15,8 +17,11 @@ function fieldRule(field: Field) {
   }
 }
 
-export function buildValidatorFromFields(fields: Field[], _mode: 'create' | 'update') {
-  const schema: Record<string, any> = {}
+export function buildValidatorFromFields(
+  fields: Field[],
+  _mode: 'create' | 'update'
+): AdminResourceValidator {
+  const schema: Record<string, SchemaTypes> = {}
 
   for (const field of fields) {
     const rule = fieldRule(field)

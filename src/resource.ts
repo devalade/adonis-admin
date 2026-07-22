@@ -1,6 +1,9 @@
 import type { HttpContext } from '@adonisjs/core/http'
-import type { LucidModel, LucidRow } from '@adonisjs/lucid/types/model'
-import type { VineValidator } from '@vinejs/vine'
+import type {
+  LucidModel,
+  LucidRow,
+  ModelQueryBuilderContract,
+} from '@adonisjs/lucid/types/model'
 import { defineForm } from './form/form.js'
 import { defineTable } from './table/table.js'
 import { Action } from './table/actions/index.js'
@@ -9,9 +12,12 @@ import {
   resourceRouteNameFromSlug,
   resourceSlugFromModelName,
 } from './helpers/slug.js'
-import type { AdminResourceSchema, SortDirection } from './types.js'
+import type { AdminRecord, AdminResourceSchema, SortDirection } from './types.js'
+import type { AdminResourceValidator } from './types/validators.js'
 
 export type ResourceConstructor = typeof Resource
+
+export type ResourceIndexQuery = ModelQueryBuilderContract<LucidModel, LucidRow>
 
 export abstract class Resource {
   static model: LucidModel
@@ -19,8 +25,8 @@ export abstract class Resource {
   static singularLabel?: string
   static icon = 'file'
   static perPage = 20
-  static validator?: VineValidator<any, any>
-  static updateValidator?: VineValidator<any, any>
+  static validator?: AdminResourceValidator
+  static updateValidator?: AdminResourceValidator
 
   static table(_table: ReturnType<typeof defineTable>) {
     return defineTable((table) =>
@@ -68,12 +74,20 @@ export abstract class Resource {
     return true
   }
 
-  static modifyIndexQuery(query: any, _ctx: HttpContext) {
+  static supportsEdit(_ctx: HttpContext) {
+    return true
+  }
+
+  static supportsDelete(_ctx: HttpContext) {
+    return true
+  }
+
+  static modifyIndexQuery(query: ResourceIndexQuery, _ctx: HttpContext): ResourceIndexQuery {
     return query
   }
 
-  static serializeRecord(record: LucidRow) {
-    return record.serialize() as Record<string, unknown>
+  static serializeRecord(record: LucidRow): AdminRecord {
+    return record.serialize() as AdminRecord
   }
 
   static toSchema(ctx: HttpContext): AdminResourceSchema {
@@ -95,8 +109,8 @@ export abstract class Resource {
       defaultSort,
       searchable: table.getColumns().some((column) => column.searchable),
       canCreate: this.canCreate(ctx),
-      canEdit: true,
-      canDelete: true,
+      canEdit: this.supportsEdit(ctx),
+      canDelete: this.supportsDelete(ctx),
       canView: this.canView(ctx),
     }
   }

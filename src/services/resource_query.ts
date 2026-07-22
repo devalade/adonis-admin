@@ -2,7 +2,7 @@ import app from '@adonisjs/core/services/app'
 import type { HttpContext } from '@adonisjs/core/http'
 import type { LucidRow } from '@adonisjs/lucid/types/model'
 import { formatColumnValue } from '../helpers/format_value.js'
-import type { ResourceConstructor } from '../resource.js'
+import type { ResourceConstructor, ResourceIndexQuery } from '../resource.js'
 import type { AdminRow, SortDirection } from '../types.js'
 
 export type ListQueryInput = {
@@ -19,7 +19,7 @@ function usesCaseInsensitiveSearch() {
 }
 
 function applyColumnSearch(
-  builder: any,
+  builder: ResourceIndexQuery,
   columnName: string,
   term: string,
   caseInsensitive: boolean
@@ -42,7 +42,7 @@ export async function queryResourceRows(
   const sortColumn = ResourceClass.getSortColumn(input.sort)
   const sortDirection = ResourceClass.getSortDirection(input.direction)
 
-  let query = ResourceClass.model.query()
+  let query: ResourceIndexQuery = ResourceClass.model.query()
   query = ResourceClass.modifyIndexQuery(query, ctx)
 
   for (const filter of table.getFilters()) {
@@ -60,7 +60,7 @@ export async function queryResourceRows(
       const term = `%${input.search}%`
       const caseInsensitive = usesCaseInsensitiveSearch()
 
-      query = query.where((builder: any) => {
+      query = query.where((builder) => {
         for (const column of searchableColumns) {
           applyColumnSearch(builder, column.name, term, caseInsensitive)
         }

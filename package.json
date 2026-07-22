@@ -1,6 +1,6 @@
 {
   "name": "@devalade/adonis-admin",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Filament-inspired admin panel for AdonisJS 7 + Inertia React",
   "type": "module",
   "license": "MIT",
@@ -41,13 +41,38 @@
       "types": "./build/src/provider.d.ts",
       "import": "./build/src/provider.js"
     },
-    "./commands": "./build/commands/main.js",
-    "./routes/*": "./build/src/routes/*.js",
-    "./middleware/*": "./build/src/middleware/*.js",
-    "./helpers/*": "./build/src/helpers/*.js",
-    "./controllers/*": "./build/src/controllers/*.js",
-    "./services/*": "./build/src/services/*.js",
-    "./*": "./build/src/*.js"
+    "./types": {
+      "types": "./build/src/types.d.ts",
+      "import": "./build/src/types.js"
+    },
+    "./commands": {
+      "types": "./build/commands/main.d.ts",
+      "import": "./build/commands/main.js"
+    },
+    "./routes/*": {
+      "types": "./build/src/routes/*.d.ts",
+      "import": "./build/src/routes/*.js"
+    },
+    "./middleware/*": {
+      "types": "./build/src/middleware/*.d.ts",
+      "import": "./build/src/middleware/*.js"
+    },
+    "./helpers/*": {
+      "types": "./build/src/helpers/*.d.ts",
+      "import": "./build/src/helpers/*.js"
+    },
+    "./controllers/*": {
+      "types": "./build/src/controllers/*.d.ts",
+      "import": "./build/src/controllers/*.js"
+    },
+    "./services/*": {
+      "types": "./build/src/services/*.d.ts",
+      "import": "./build/src/services/*.js"
+    },
+    "./*": {
+      "types": "./build/src/*.d.ts",
+      "import": "./build/src/*.js"
+    }
   },
   "scripts": {
     "clean": "del-cli build",

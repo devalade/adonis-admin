@@ -1,3 +1,4 @@
+import type { JSONDataTypes } from '@adonisjs/core/types/transformers';
 export type SortDirection = 'asc' | 'desc';
 export type AdminColumnType = 'text' | 'badge' | 'date' | 'boolean';
 export type AdminFieldType = 'text' | 'email' | 'select' | 'boolean' | 'textarea';
@@ -63,8 +64,11 @@ export type AdminNavItem = {
     label: string;
     icon: string;
 };
+export type AdminPageProps = {
+    adminNav: AdminNavItem[];
+};
 export type AdminRow = Record<string, string | number | boolean | null>;
-export type AdminRecord = Record<string, unknown>;
+export type AdminRecord = Record<string, JSONDataTypes>;
 export type AdminListProps = {
     resource: AdminResourceSchema;
     rows: AdminRow[];
@@ -88,4 +92,8 @@ export type AdminShowProps = {
     resource: AdminResourceSchema;
     record: AdminRecord;
 };
+export type AdminLoginPageProps = Record<string, never>;
+export type AdminIndexPageProps = AdminListProps & AdminPageProps;
+export type AdminFormPageProps = AdminFormProps & AdminPageProps;
+export type AdminShowPageProps = AdminShowProps & AdminPageProps;
 //# sourceMappingURL=types.d.ts.map

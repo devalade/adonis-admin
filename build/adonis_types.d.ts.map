@@ -1,1 +1,1 @@
-{"version":3,"file":"adonis_types.d.ts","sourceRoot":"","sources":["../adonis_types.ts"],"names":[],"mappings":"AAIA,OAAO,QAAQ,qBAAqB,CAAC;IACnC,UAAU,WAAW;QACnB,IAAI,EAAE,GAAG,CAAA;KACV;IAED,UAAU,QAAQ;QAChB,OAAO,CAAC,KAAK,EAAE,MAAM,EAAE,MAAM,CAAC,EAAE,MAAM,CAAC,MAAM,EAAE,OAAO,CAAC,GAAG,QAAQ,CAAA;KACnE;CACF;AAED,OAAO,QAAQ,yBAAyB,CAAC;IACvC,UAAU,YAAY;QACpB,CAAC,GAAG,EAAE,MAAM,GAAG,GAAG,CAAA;KACnB;CACF"}
+{"version":3,"file":"adonis_types.d.ts","sourceRoot":"","sources":["../adonis_types.ts"],"names":[],"mappings":"AAKA,OAAO,8BAA8B,CAAA;AACrC,OAAO,6BAA6B,CAAA"}

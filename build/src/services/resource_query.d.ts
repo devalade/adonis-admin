@@ -20,5 +20,5 @@ export declare function queryResourceRows(ResourceClass: ResourceConstructor, ct
     };
 }>;
 export declare function serializeRow(ResourceClass: ResourceConstructor, record: LucidRow): AdminRow;
-export declare function serializeRecordForForm(ResourceClass: ResourceConstructor, record: LucidRow): Record<string, unknown>;
+export declare function serializeRecordForForm(ResourceClass: ResourceConstructor, record: LucidRow): import("../types.js").AdminRecord;
 //# sourceMappingURL=resource_query.d.ts.map

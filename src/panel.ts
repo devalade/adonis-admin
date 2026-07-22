@@ -1,12 +1,12 @@
-import type { VineValidator } from '@vinejs/vine'
 import type { ResourceConstructor } from './resource.js'
+import type { AdminLoginValidator } from './types/validators.js'
 
 export type AdminPanelConfig = {
   path: string
   guard: string
   registerModule: string
   userModelModule: string
-  loginValidator: VineValidator<any, any>
+  loginValidator: AdminLoginValidator
   resources: ResourceConstructor[]
   pagination: {
     defaultPerPage: number
@@ -17,12 +17,11 @@ export type AdminPanelConfig = {
   }
 }
 
-export const adminPanelDefaults: AdminPanelConfig = {
+export const adminPanelDefaults: Omit<AdminPanelConfig, 'loginValidator'> = {
   path: '/admin',
   guard: 'web',
   registerModule: '#app_admin/register',
   userModelModule: '#models/user',
-  loginValidator: null as unknown as VineValidator<any, any>,
   resources: [],
   pagination: {
     defaultPerPage: 20,
@@ -34,9 +33,14 @@ export const adminPanelDefaults: AdminPanelConfig = {
 }
 
 export function resolveAdminConfig(config: Partial<AdminPanelConfig>): AdminPanelConfig {
+  if (!config.loginValidator) {
+    throw new Error('admin.loginValidator is required in config/admin.ts')
+  }
+
   return {
     ...adminPanelDefaults,
     ...config,
+    loginValidator: config.loginValidator,
     pagination: {
       ...adminPanelDefaults.pagination,
       ...config.pagination,
@@ -45,5 +49,6 @@ export function resolveAdminConfig(config: Partial<AdminPanelConfig>): AdminPane
       ...adminPanelDefaults.bulkDestroy,
       ...config.bulkDestroy,
     },
+    resources: config.resources ?? adminPanelDefaults.resources,
   }
 }

@@ -1,17 +1,14 @@
-import app from '@adonisjs/core/services/app'
 import type { HttpContext } from '@adonisjs/core/http'
 import vine from '@vinejs/vine'
+import '../types/augmentations.js'
+import { getAdminConfig } from '../helpers/admin_config.js'
+import { adminResourceRoute } from '../helpers/admin_routes.js'
 import { buildValidatorFromFields } from '../helpers/build_validator.js'
-import type { AdminPanelConfig } from '../panel.js'
 import type { ResourceConstructor } from '../resource.js'
 import {
   queryResourceRows,
   serializeRecordForForm,
 } from '../services/resource_query.js'
-
-function adminConfig() {
-  return app.config.get('admin') as AdminPanelConfig
-}
 
 const listQueryValidator = vine.create({
   page: vine.number().withoutDecimals().min(1).optional(),
@@ -27,7 +24,7 @@ function bulkDestroyValidator(maxIds: number) {
   })
 }
 
-function getResourceFromContext(ctx: HttpContext) {
+function getResourceFromContext(ctx: HttpContext): ResourceConstructor {
   return ctx.adminResource
 }
 
@@ -46,12 +43,13 @@ function readFilters(ResourceClass: ResourceConstructor, query: Record<string, u
 }
 
 export default class AdminResourceController {
-  async index(ctx: HttpContext) {
+  async index(ctx: HttpContext): Promise<void> {
     const { request, inertia } = ctx
     const ResourceClass = getResourceFromContext(ctx)
 
     if (!ResourceClass.canView(ctx)) {
-      return ctx.response.abort('Forbidden', 403)
+      ctx.response.abort('Forbidden', 403)
+      return
     }
 
     const payload = await request.validateUsing(listQueryValidator, {
@@ -59,7 +57,7 @@ export default class AdminResourceController {
     })
 
     const filters = readFilters(ResourceClass, request.qs())
-    const config = adminConfig()
+    const config = getAdminConfig()
     const { rows, metadata } = await queryResourceRows(ResourceClass, ctx, {
       page: payload.page ?? 1,
       perPage: Math.min(
@@ -74,7 +72,7 @@ export default class AdminResourceController {
 
     const resource = ResourceClass.toSchema(ctx)
 
-    return inertia.render('admin/resource/index' as any, {
+    await inertia.render('admin/resource/index', {
       resource,
       rows,
       metadata,
@@ -86,83 +84,88 @@ export default class AdminResourceController {
     })
   }
 
-  async create(ctx: HttpContext) {
+  async create(ctx: HttpContext): Promise<void> {
     const { inertia } = ctx
     const ResourceClass = getResourceFromContext(ctx)
 
     if (!ResourceClass.canCreate(ctx)) {
-      return ctx.response.abort('Forbidden', 403)
+      ctx.response.abort('Forbidden', 403)
+      return
     }
 
-    return inertia.render('admin/resource/form' as any, {
+    await inertia.render('admin/resource/form', {
       resource: ResourceClass.toSchema(ctx),
-      mode: 'create',
+      mode: 'create' as const,
       adminNav: ctx.adminNav,
     })
   }
 
-  async store(ctx: HttpContext) {
+  async store(ctx: HttpContext): Promise<void> {
     const { request, session, response } = ctx
     const ResourceClass = getResourceFromContext(ctx)
 
     if (!ResourceClass.canCreate(ctx)) {
-      return ctx.response.abort('Forbidden', 403)
+      ctx.response.abort('Forbidden', 403)
+      return
     }
 
     const fields = ResourceClass.getForm().getFields()
     const validator = ResourceClass.validator ?? buildValidatorFromFields(fields, 'create')
-    const payload = await request.validateUsing(validator)
+    const payload = await request.validateUsing(validator, { meta: undefined })
 
     const record = await ResourceClass.model.create(payload)
     session.flash('success', `${ResourceClass.getSingularLabel()} created.`)
 
-    return response
+    response
       .redirect()
-      .toRoute(`admin.${ResourceClass.getRouteName()}.edit` as any, {
+      .toRoute(adminResourceRoute(ResourceClass.getRouteName(), 'edit'), {
         id: record.$primaryKeyValue,
       })
   }
 
-  async show(ctx: HttpContext) {
+  async show(ctx: HttpContext): Promise<void> {
     const { params, inertia } = ctx
     const ResourceClass = getResourceFromContext(ctx)
     const record = await ResourceClass.model.findOrFail(params.id)
 
     if (!ResourceClass.canView(ctx)) {
-      return ctx.response.abort('Forbidden', 403)
+      ctx.response.abort('Forbidden', 403)
+      return
     }
 
-    return inertia.render('admin/resource/show' as any, {
+    await inertia.render('admin/resource/show', {
       resource: ResourceClass.toSchema(ctx),
       record: serializeRecordForForm(ResourceClass, record),
       adminNav: ctx.adminNav,
     })
   }
 
-  async edit(ctx: HttpContext) {
+  async edit(ctx: HttpContext): Promise<void> {
     const { params, inertia } = ctx
     const ResourceClass = getResourceFromContext(ctx)
     const record = await ResourceClass.model.findOrFail(params.id)
 
     if (!ResourceClass.canEdit(ctx, record)) {
-      return ctx.response.abort('Forbidden', 403)
+      ctx.response.abort('Forbidden', 403)
+      return
     }
 
-    return inertia.render('admin/resource/form' as any, {
+    await inertia.render('admin/resource/form', {
       resource: ResourceClass.toSchema(ctx),
       record: serializeRecordForForm(ResourceClass, record),
-      mode: 'edit',
+      mode: 'edit' as const,
       adminNav: ctx.adminNav,
     })
   }
 
-  async update(ctx: HttpContext) {
+  async update(ctx: HttpContext): Promise<void> {
     const { params, request, session, response } = ctx
     const ResourceClass = getResourceFromContext(ctx)
     const record = await ResourceClass.model.findOrFail(params.id)
 
     if (!ResourceClass.canEdit(ctx, record)) {
-      return ctx.response.abort('Forbidden', 403)
+      ctx.response.abort('Forbidden', 403)
+      return
     }
 
     const fields = ResourceClass.getForm().getFields()
@@ -170,39 +173,41 @@ export default class AdminResourceController {
       ResourceClass.updateValidator ??
       ResourceClass.validator ??
       buildValidatorFromFields(fields, 'update')
-    const payload = await request.validateUsing(validator)
+    const payload = await request.validateUsing(validator, { meta: undefined })
 
     record.merge(payload)
     await record.save()
 
     session.flash('success', `${ResourceClass.getSingularLabel()} updated.`)
 
-    return response.redirect().back()
+    response.redirect().back()
   }
 
-  async destroy(ctx: HttpContext) {
+  async destroy(ctx: HttpContext): Promise<void> {
     const { params, session, response } = ctx
     const ResourceClass = getResourceFromContext(ctx)
     const record = await ResourceClass.model.findOrFail(params.id)
 
     if (!ResourceClass.canDelete(ctx, record)) {
-      return ctx.response.abort('Forbidden', 403)
+      ctx.response.abort('Forbidden', 403)
+      return
     }
 
     await record.delete()
 
     session.flash('success', `${ResourceClass.getSingularLabel()} deleted.`)
 
-    return response.redirect().toRoute(`admin.${ResourceClass.getRouteName()}.index` as any)
+    response.redirect().toRoute(adminResourceRoute(ResourceClass.getRouteName(), 'index'))
   }
 
-  async bulkDestroy(ctx: HttpContext) {
+  async bulkDestroy(ctx: HttpContext): Promise<void> {
     const { request, session, response } = ctx
     const ResourceClass = getResourceFromContext(ctx)
-    const config = adminConfig()
+    const config = getAdminConfig()
 
     if (!ResourceClass.canView(ctx)) {
-      return ctx.response.abort('Forbidden', 403)
+      ctx.response.abort('Forbidden', 403)
+      return
     }
 
     const payload = await request.validateUsing(
@@ -223,6 +228,6 @@ export default class AdminResourceController {
 
     session.flash('success', `${deletedCount} record(s) deleted.`)
 
-    return response.redirect().toRoute(`admin.${ResourceClass.getRouteName()}.index` as any)
+    response.redirect().toRoute(adminResourceRoute(ResourceClass.getRouteName(), 'index'))
   }
 }
