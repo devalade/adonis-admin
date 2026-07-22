@@ -1,0 +1,10 @@
+import { bootAdminPanel } from '@devalade/adonis-admin/routes/register_routes'
+import { registerAdminResources } from '#app_admin/register'
+import { middleware } from '#start/kernel'
+
+await bootAdminPanel(registerAdminResources, {
+  adminAuth: () => middleware.adminAuth(),
+  adminGuest: () => middleware.adminGuest(),
+  adminContext: () => middleware.adminContext(),
+  adminResource: () => middleware.adminResource(),
+})

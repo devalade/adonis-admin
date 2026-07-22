@@ -1,0 +1,92 @@
+{
+  "name": "@devalade/adonis-admin",
+  "version": "0.1.0",
+  "description": "Filament-inspired admin panel for AdonisJS 7 + Inertia React",
+  "type": "module",
+  "license": "MIT",
+  "author": "Devalade",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/devalade/adonis-admin.git"
+  },
+  "bugs": {
+    "url": "https://github.com/devalade/adonis-admin/issues"
+  },
+  "homepage": "https://github.com/devalade/adonis-admin#readme",
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": [
+    "adonisjs",
+    "admin",
+    "inertia",
+    "react",
+    "filament"
+  ],
+  "engines": {
+    "node": ">=24.0.0"
+  },
+  "files": [
+    "build",
+    "stubs"
+  ],
+  "main": "build/index.js",
+  "types": "build/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./build/index.d.ts",
+      "import": "./build/index.js"
+    },
+    "./provider": {
+      "types": "./build/src/provider.d.ts",
+      "import": "./build/src/provider.js"
+    },
+    "./commands": "./build/commands/main.js",
+    "./routes/*": "./build/src/routes/*.js",
+    "./middleware/*": "./build/src/middleware/*.js",
+    "./helpers/*": "./build/src/helpers/*.js",
+    "./controllers/*": "./build/src/controllers/*.js",
+    "./services/*": "./build/src/services/*.js",
+    "./*": "./build/src/*.js"
+  },
+  "scripts": {
+    "clean": "del-cli build",
+    "copy:stubs": "copyfiles \"stubs/**/*\" build/stubs",
+    "index:commands": "adonis-kit index build/commands",
+    "typecheck": "tsc --noEmit",
+    "precompile": "npm run clean",
+    "compile": "tsc",
+    "postcompile": "npm run copy:stubs && npm run index:commands",
+    "build": "npm run compile",
+    "prepublishOnly": "npm run build"
+  },
+  "peerDependencies": {
+    "@adonisjs/auth": "^10.0.0",
+    "@adonisjs/core": "^7.0.0",
+    "@adonisjs/inertia": "^4.0.0",
+    "@adonisjs/lucid": "^22.0.0",
+    "@vinejs/vine": "^4.0.0"
+  },
+  "peerDependenciesMeta": {
+    "@adonisjs/assembler": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@adonisjs/assembler": "^8.4.0",
+    "@adonisjs/auth": "^10.0.0",
+    "@adonisjs/core": "^7.3.4",
+    "@adonisjs/inertia": "^4.0.0",
+    "@adonisjs/lucid": "^22.0.0",
+    "@adonisjs/session": "^8.0.0",
+    "@adonisjs/tsconfig": "^2.0.0",
+    "@poppinss/ts-exec": "^1.4.4",
+    "@types/luxon": "^3.7.1",
+    "@types/node": "^25.9.1",
+    "@vinejs/vine": "^4.0.0",
+    "copyfiles": "^2.4.1",
+    "del-cli": "^7.0.0",
+    "luxon": "^3.7.2",
+    "typescript": "^6.0.3"
+  }
+}

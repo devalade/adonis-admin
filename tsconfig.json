@@ -1,0 +1,12 @@
+{
+  "extends": "@adonisjs/tsconfig/tsconfig.package.json",
+  "compilerOptions": {
+    "rootDir": "./",
+    "outDir": "./build",
+    "declaration": true,
+    "declarationMap": true,
+    "skipLibCheck": true
+  },
+  "include": ["./adonis_types.ts", "./index.ts", "./src/**/*.ts", "./commands/**/*.ts", "./stubs/root.ts"],
+  "exclude": ["./build", "./stubs/inertia/**"]
+}
